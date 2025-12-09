@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CatalogService.Infrastructure.Adapters
+namespace CatalogService.Application.Interfaces
 {
     public interface IMonolithCatalogAdapter
     {
