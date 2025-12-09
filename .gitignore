@@ -429,3 +429,5 @@ obj/
 *.log
 *.swp
 >>>>>>> 6c36464 (Initial commit - CatalogService setup)
+/README.md
+/LICENSE
