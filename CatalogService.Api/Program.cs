@@ -1,4 +1,8 @@
 
+using CatalogService.Application.Interfaces;
+using CatalogService.Application.Services;
+using CatalogService.Infrastructure.Adapters;
+
 namespace CatalogService.Api
 {
     public class Program
@@ -13,6 +17,13 @@ namespace CatalogService.Api
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            // Application + Infrastructure Dependencies
+            builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddHttpClient<IMonolithCatalogAdapter, MonolithCatalogAdapter>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:5001"); // monolith URL
+            });
 
             var app = builder.Build();
 
