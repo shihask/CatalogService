@@ -1,32 +1,43 @@
 ﻿using CatalogService.Application.Dtos;
 using CatalogService.Application.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CatalogService.Application.Services
 {
     public class ProductService : IProductService
     {
-        private readonly IMonolithCatalogAdapter _adapter;
+        private readonly IProductRepository _repo;
 
-        public ProductService(IMonolithCatalogAdapter adapter)
+        public ProductService(IProductRepository repo)
         {
-            _adapter = adapter;
+            _repo = repo;
         }
 
         public async Task<IEnumerable<ProductDto>> GetAllAsync()
         {
-            return await _adapter.GetAllProductsAsync();
+            var items = await _repo.GetAllAsync();
+            return items.Select(p => new ProductDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Price = p.Price,
+                ImageUrl = p.ImageUrl
+            });
         }
 
         public async Task<ProductDto?> GetByIdAsync(int id)
         {
-            return await _adapter.GetProductByIdAsync(id);
+            var p = await _repo.GetByIdAsync(id);
+            if (p == null) return null;
+            return new ProductDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Price = p.Price,
+                ImageUrl = p.ImageUrl
+            };
         }
     }
-
-
 }

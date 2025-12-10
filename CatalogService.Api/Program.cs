@@ -22,7 +22,7 @@ namespace CatalogService.Api
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddHttpClient<IMonolithCatalogAdapter, MonolithCatalogAdapter>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:5001"); // monolith URL
+                client.BaseAddress = new Uri("https://localhost:59579"); // monolith URL
             });
 
             var app = builder.Build();

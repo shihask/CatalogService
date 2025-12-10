@@ -20,7 +20,7 @@ namespace CatalogService.Infrastructure.Adapters
 
         public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
         {
-            var response = await _client.GetAsync("/Product/List");
+            var response = await _client.GetAsync("/Admin/Product/List");
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
