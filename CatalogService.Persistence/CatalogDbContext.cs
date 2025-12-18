@@ -7,25 +7,18 @@ namespace CatalogService.Persistence
 {
     public class CatalogDbContext : DbContext
     {
-        public CatalogDbContext(DbContextOptions<CatalogDbContext> options) : base(options) { }
-
-        public DbSet<Product> Products => Set<Product>();
+        public CatalogDbContext(DbContextOptions<CatalogDbContext> options)
+            : base(options)
+        {
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            // Automatically apply all IEntityTypeConfiguration<T>
+            modelBuilder.ApplyConfigurationsFromAssembly(
+                typeof(CatalogDbContext).Assembly);
 
-            modelBuilder.Entity<Product>(b =>
-            {
-                b.ToTable("Product");
-                b.HasKey(x => x.Id);
-                b.Property(x => x.Name).HasMaxLength(400).IsRequired();
-                b.Property(x => x.ShortDescription).HasMaxLength(1000);
-                b.Property(x => x.Price).HasColumnType("decimal(18,2)");
-                b.Property(x => x.Published).HasDefaultValue(true);
-                b.Property(x => x.CreatedOnUtc).IsRequired();
-                b.Property(x => x.UpdatedOnUtc).IsRequired();
-            });
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

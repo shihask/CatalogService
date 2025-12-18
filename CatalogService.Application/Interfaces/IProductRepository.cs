@@ -9,9 +9,13 @@ namespace CatalogService.Application.Interfaces
 {
     public interface IProductRepository
     {
-        Task<IEnumerable<Product>> GetAllAsync();
         Task<Product?> GetByIdAsync(int id);
+
+        Task<IReadOnlyList<Product>> GetPublishedAsync();
+
         Task AddAsync(Product product);
+
         Task SaveChangesAsync();
     }
+
 }

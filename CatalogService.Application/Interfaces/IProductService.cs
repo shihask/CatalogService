@@ -9,9 +9,9 @@ namespace CatalogService.Application.Interfaces
 {
     public interface IProductService
     {
-        Task<IEnumerable<ProductDto>> GetAllAsync();
+        Task<IReadOnlyList<ProductDto>> GetPublishedAsync();
         Task<ProductDto?> GetByIdAsync(int id);
+        Task<int> CreateAsync(CreateProductDto dto);
+        Task PublishAsync(int productId);
     }
-
-
 }

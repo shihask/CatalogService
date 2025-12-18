@@ -2,6 +2,9 @@
 using CatalogService.Application.Interfaces;
 using CatalogService.Application.Services;
 using CatalogService.Infrastructure.Adapters;
+using CatalogService.Persistence;
+using CatalogService.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace CatalogService.Api
 {
@@ -17,6 +20,12 @@ namespace CatalogService.Api
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<CatalogDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("CatalogDatabase")));
+
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
             // Application + Infrastructure Dependencies
             builder.Services.AddScoped<IProductService, ProductService>();

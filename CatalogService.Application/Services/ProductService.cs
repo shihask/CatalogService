@@ -1,5 +1,6 @@
 ﻿using CatalogService.Application.Dtos;
 using CatalogService.Application.Interfaces;
+using CatalogService.Domain.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,22 +16,26 @@ namespace CatalogService.Application.Services
             _repo = repo;
         }
 
-        public async Task<IEnumerable<ProductDto>> GetAllAsync()
+        // Use case: Get published products
+        public async Task<IReadOnlyList<ProductDto>> GetPublishedAsync()
         {
-            var items = await _repo.GetAllAsync();
-            return items.Select(p => new ProductDto
+            var products = await _repo.GetPublishedAsync();
+
+            return products.Select(p => new ProductDto
             {
                 Id = p.Id,
                 Name = p.Name,
                 Price = p.Price,
                 ImageUrl = p.ImageUrl
-            });
+            }).ToList();
         }
 
+        // Use case: Get product by id
         public async Task<ProductDto?> GetByIdAsync(int id)
         {
             var p = await _repo.GetByIdAsync(id);
             if (p == null) return null;
+
             return new ProductDto
             {
                 Id = p.Id,
@@ -38,6 +43,28 @@ namespace CatalogService.Application.Services
                 Price = p.Price,
                 ImageUrl = p.ImageUrl
             };
+        }
+
+        // Use case: Create product
+        public async Task<int> CreateAsync(CreateProductDto dto)
+        {
+            var product = new Product(dto.Name, dto.Price, dto.ImageUrl);
+
+            await _repo.AddAsync(product);
+            await _repo.SaveChangesAsync();
+
+            return product.Id;
+        }
+
+        // Use case: Publish product
+        public async Task PublishAsync(int productId)
+        {
+            var product = await _repo.GetByIdAsync(productId)
+                ?? throw new InvalidOperationException("Product not found");
+
+            product.Publish(); // DOMAIN BEHAVIOR
+
+            await _repo.SaveChangesAsync();
         }
     }
 }

@@ -5,28 +5,52 @@ namespace CatalogService.Domain.Entities
 {
     public class Product : BaseEntity
     {
-        // EF-friendly public setters and default ctor        
-        public string Name { get; set; } = null!;
-        public string? ShortDescription { get; set; }
-        public decimal Price { get; set; }
-        public bool Published { get; set; }
-        public DateTime CreatedOnUtc { get; set; }
-        public DateTime UpdatedOnUtc { get; set; }
-        public string? ImageUrl { get; set; }
+        public string Name { get; private set; } = null!;
+        public decimal Price { get; private set; }
+        public bool Published { get; private set; }
+        public string? ImageUrl { get; private set; }
 
-        // Parameterless ctor required by EF (or used for easy creation)
-        public Product() { }
+        // EF Core requirement
+        protected Product() { }
 
-        // Optional convenience ctor for your code usage
-        public Product(int id, string name, decimal price, string? imageUrl = null)
+        public Product(string name, decimal price, string? imageUrl = null)
         {
-            Id = id;
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Name is required");
+
+            if (price <= 0)
+                throw new ArgumentException("Price must be greater than zero");
+
             Name = name;
             Price = price;
             ImageUrl = imageUrl;
+            Published = false;
+        }
+
+        // ---- Domain behavior ----
+
+        public void Publish()
+        {
+            if (Published)
+                throw new InvalidOperationException("Product already published");
+
             Published = true;
-            CreatedOnUtc = DateTime.UtcNow;
-            UpdatedOnUtc = DateTime.UtcNow;
+        }
+
+        public void ChangePrice(decimal newPrice)
+        {
+            if (newPrice <= 0)
+                throw new ArgumentException("Invalid price");
+
+            Price = newPrice;
+        }
+
+        public void ChangeName(string newName)
+        {
+            if (string.IsNullOrWhiteSpace(newName))
+                throw new ArgumentException("Name is required");
+
+            Name = newName;
         }
     }
 }
